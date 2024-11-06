@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Builder</title>
+    <link rel="stylesheet" href="style.css"> <!-- Link to the CSS file -->
+</head>
+<body>
+    <h1><i>DYNAMIC RESUME BUILDER by Minahil Hamza</i></h1>
+    <form id="resumeForm">
+        <fieldset>
+            <legend><b>1 - Personal Information</b></legend>
+            <label for="username"><i>Resume URL:</i></label>
+            <input type="url" id="username" name="username" required> <br>
+
+            <label for="name"><i>Name:</i></label>
+            <input type="text" id="name" name="name" required> <br>
+
+            <label for="email"><i>Email Address:</i></label>
+            <input type="email" id="email" name="email" required> <br>
+
+            <label for="phone"><i>Mobile Phone:</i></label>
+            <input type="tel" id="phone" name="phone" required> <br>
+
+            <label for="profilePicture"><i>Profile Picture:</i></label>
+            <input type="file" id="profilePicture" name="profilePicture" accept="image/*" required> <br>
+            <img id="profilePicturePreview" src="" alt="Profile Picture Preview" style="display:none; width: 100px; height: 100px;"/> <!-- Image Preview Element -->
+        </fieldset>
+
+        <fieldset>
+            <legend><b>2 - Education</b></legend>
+            <label for="education"><i>Education:</i></label>
+            <textarea id="education" name="education" rows="4" required></textarea><br>
+        </fieldset>
+
+        <fieldset>
+            <legend><b>3 - Date of Birth</b></legend>
+            <label for="DOB"><i>D.O.B:</i></label>
+            <input type="date" id="DOB" name="DOB" required> <br>
+        </fieldset>
+
+        <fieldset>
+            <legend><b>4 - Work Experience</b></legend>
+            <label for="experience"><i>Experience:</i></label>
+            <textarea id="experience" name="experience" rows="4" required></textarea><br>
+        </fieldset>
+
+        <fieldset>
+            <legend><b>5 - Personal Skills</b></legend>
+            <label for="skills"><i>Skills:</i></label>
+            <textarea id="skills" name="skills" rows="4" required></textarea><br>
+        </fieldset>
+
+        <fieldset>
+            <legend><b>6 - Signature</b></legend>
+            <label for="signature"><i>Signature:</i></label>
+            <input type="text" id="signature" name="signature" required> <br>
+        </fieldset>
+
+        <button type="submit">Generate Resume Below</button>
+    </form>
+
+    <div id="resumeoutput">
+        <!-- Resume Will Be Generated Below -->
+    </div>
+
+    <script>
+        // JavaScript to handle profile picture upload and display
+        document.getElementById('profilePicture').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('profilePicturePreview');
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Existing JavaScript code for form submission
+        document.getElementById('resumeForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // Retrieve form data
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const education = document.getElementById('education').value;
+            const experience = document.getElementById('experience').value;
+            const skills = document.getElementById('skills').value;
+            const dob = document.getElementById('DOB').value;
+            const signature = document.getElementById('signature').value;
+            const username = document.getElementById('username').value;
+            const profilePictureFile = document.getElementById('profilePicture').files[0];
+            const profilePicture = profilePictureFile ? URL.createObjectURL(profilePictureFile) : "";
+
+            // Generate unique path for download
+            const uniquePath = `resume/${username.replace(/\s+/g, '_')}_cv.html`;
+
+            // Create resume content
+            const resumeOutput = `
+                <div class="resume-section-title">Resume</div>
+                ${profilePicture ? `<img src="${profilePicture}" alt="Profile Picture" class="profilePicture">` : ""}
+                <div class="resume-content"><b>Name:</b> ${name}</div>
+                <div class="resume-content"><b>Email:</b> ${email}</div>
+                <div class="resume-content"><b>Phone Number:</b> ${phone}</div>
+                <div class="resume-content"><b>Date of Birth:</b> ${dob}</div>
+                
+                <div class="resume-section-title">Education</div>
+                <div class="resume-content">${education}</div>
+
+                <div class="resume-section-title">Experience</div>
+                <div class="resume-content">${experience}</div>
+
+                <div class="resume-section-title">Skills</div>
+                <div class="resume-content">${skills}</div>
+
+                <div class="resume-section-title">Signature</div>
+                <div class="resume-content"><b>Signature:</b> ${signature}</div>
+            `;
+
+            // Create a download link for the resume
+            const downloadLink = document.createElement('a');
+            downloadLink.href = 'data:text/html;charset=utf-8,' + encodeURIComponent(resumeOutput);
+            downloadLink.download = uniquePath;
+            downloadLink.textContent = 'Download Your 2024 Resume!';
+            
+
+            // Display resume output
+            const resumeOutputElement = document.getElementById('resumeoutput');
+            if (resumeOutputElement) {
+                resumeOutputElement.innerHTML = resumeOutput;
+                resumeOutputElement.appendChild(downloadLink);
+            } else {
+                console.error('The resume output element is missing');
+            }
+        });
+    </script>
+</body>
+</html>
