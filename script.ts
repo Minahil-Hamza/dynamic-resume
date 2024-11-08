@@ -1,5 +1,5 @@
 // Listen to the form submission event
-document.getElementById('ResumeForm')?.addEventListener('submit', function(event) {
+document.getElementById('resumeForm')?.addEventListener('submit', function (event) {
     event.preventDefault();
 
     // Type assertions
@@ -18,7 +18,6 @@ document.getElementById('ResumeForm')?.addEventListener('submit', function(event
         const education = educationElement.value;
         const experiences = experienceElement.value;
         const skills = skillsElement.value;
-    
 
         // Create resume output
         const resumeOutput = `
@@ -42,6 +41,21 @@ document.getElementById('ResumeForm')?.addEventListener('submit', function(event
         if (resumeOutputElement) {
             resumeOutputElement.innerHTML = resumeOutput;
             makeEditable();
+
+            // Display the download button
+            const downloadBtn = document.getElementById('downloadImageBtn') as HTMLButtonElement;
+            downloadBtn.style.display = 'inline-block';
+
+            // Add download functionality
+            downloadBtn.onclick = function () {
+                html2canvas(resumeOutputElement as HTMLElement).then(canvas => {
+                    const imageURL = canvas.toDataURL('image/png');
+                    const downloadLink = document.createElement('a');
+                    downloadLink.href = imageURL;
+                    downloadLink.download = 'resume.png';
+                    downloadLink.click();
+                });
+            };
         } else {
             console.error('The resume output element is missing');
         }
@@ -50,10 +64,11 @@ document.getElementById('ResumeForm')?.addEventListener('submit', function(event
     }
 });
 
-function makeEditable(){
+// Function to make resume fields editable
+function makeEditable() {
     const editableElements = document.querySelectorAll('.editable');
     editableElements.forEach(element => {
-        element.addEventListener('click', function() {
+        element.addEventListener('click', function () {
             const currentElement = element as HTMLElement;
             const currentValue = currentElement.textContent || "";
 
@@ -64,7 +79,7 @@ function makeEditable(){
                 input.value = currentValue;
                 input.classList.add('editing-input');
 
-                input.addEventListener('blur', function() {
+                input.addEventListener('blur', function () {
                     currentElement.textContent = input.value;
                     currentElement.style.display = 'inline';
                     input.remove();
